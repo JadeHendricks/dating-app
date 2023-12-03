@@ -12,15 +12,16 @@ export class MemberListComponent implements OnInit {
   public members: Member[] = [];
 
   constructor(
-    private memberSerive: MembersService
+    private memberService: MembersService
   ) {}
 
   ngOnInit(): void {
     this.loadMembers();
+    console.log('Members', this.members)
   }
 
   private loadMembers(): void {
-    this.memberSerive.getMembers().subscribe({
+    this.memberService.getMembers().subscribe({
       next: members => this.members = members
     });
   }
