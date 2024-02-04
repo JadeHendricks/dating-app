@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using API.Extensions;
-
-namespace API.Entities;
+﻿namespace API.Entities;
 
 public class AppUser
 {
