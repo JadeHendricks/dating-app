@@ -61,8 +61,6 @@ public class UsersController : BaseApiController
     {
         var user = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
 
-        if (user == null) return NotFound();
-
         var result = await _photoService.AddPhotoAsync(file);
 
         if (result.Error != null) return BadRequest(result.Error.Message);
@@ -72,7 +70,10 @@ public class UsersController : BaseApiController
             PublicId = result.PublicId
         };
 
-        if (user.Photos.Count == 0) photo.IsMain = true;
+        if (user.Photos.Count == 0) 
+        {
+        photo.IsMain = true;
+        }
 
         user.Photos.Add(photo);
 

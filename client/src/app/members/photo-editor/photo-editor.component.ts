@@ -60,7 +60,7 @@ export class PhotoEditorComponent implements OnInit {
 
   private initializeUploader(): void {
     this.uploader = new FileUploader({
-      url: this.baseUrl + 'user/add-photo',
+      url: this.baseUrl + 'users/add-photo',
       authToken: 'Bearer ' + this.user?.token, //because this is outside of our angular http so we won't be going through our http interceptor for this occation
       isHTML5: true,
       allowedFileType: ['image'],
@@ -77,6 +77,11 @@ export class PhotoEditorComponent implements OnInit {
       if (response) {
         const photo = JSON.parse(response);
         this.member?.photos.push(photo);
+        if (photo.isMain && this.user && this.member) {
+          this.user.photoUrl = photo.url;
+          this.member.photoUrl = photo.url;
+          this.accountService.setCurrentUser(this.user);
+        }
       }
     }
   }
