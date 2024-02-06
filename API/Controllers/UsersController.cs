@@ -32,6 +32,14 @@ public class UsersController : BaseApiController
     [HttpGet]
     public async Task<ActionResult<PagedList<MemberDto>>> GetUsers([FromQuery]UserParams userParams)
     {
+        var currentUser = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
+        userParams.CurrentUsername = currentUser.UserName;
+
+        if (string.IsNullOrEmpty(userParams.Gender))
+        {
+            userParams.Gender = currentUser.Gender == "male" ? "female": "male";
+        }
+
         //We're going to have to give our API a hint on where to find UserParams, because this is an object and a queryString is a string
         var users = await _userRepository.GetMembersAsync(userParams);
 
