@@ -20,6 +20,7 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IPhotoService, PhotoService>();
         services.AddScoped<LogUserActivity>(); //we can be specific on where we actually want to use this (BaseApiController)
+        services.AddScoped<ILikesRepository, LikesRepository>();
         //automapper comes with it's own implementation
         //we need to tell automapper where our mapping profiles are
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
