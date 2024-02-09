@@ -54,8 +54,6 @@ export class MembersService {
     //setting a key here, so we can check it on the second call
     const response = this.memberCache.get(Object.values(userParams).join('-'));
 
-    console.log('getMembers response', response);
-
     if (response) return of(response); 
 
     let params = this.getPaginationHeaders(userParams.pageNumber, userParams.pageSize);
@@ -99,6 +97,17 @@ export class MembersService {
 
   public deletePhoto(photoId: number) {
     return this.http.delete(this.baseUrl + 'users/delete-photo/' + photoId);
+  }
+
+  public addLike(username: string): Observable<{}> {
+    return this.http.post(this.baseUrl + 'likes/' + username, {});
+  }
+
+  public getLikes(predicate: string, pageNumber: number, pageSize: number): Observable<PaginatedResult<Member[]>> {
+    let params = this.getPaginationHeaders(pageNumber, pageSize);
+    params = params.append('predicate', predicate);
+
+    return this.getPaginatedResult<Member[]>(this.baseUrl + 'likes', params);
   }
 
   private getPaginatedResult<T>(url: string, params: HttpParams) {

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AccountService } from '../_services/account.service';
 import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
+import { MembersService } from '../_services/members.service';
 
 @Component({
   selector: 'app-nav',
@@ -14,7 +14,7 @@ export class NavComponent implements OnInit {
   constructor(
     public accountService: AccountService,
     private router: Router,
-    private toastr: ToastrService
+    private membersService: MembersService
   ) {}
 
   ngOnInit(): void {
@@ -23,7 +23,11 @@ export class NavComponent implements OnInit {
 
   public login(): void {
     this.accountService.login(this.model).subscribe({
-      next: () => this.router.navigateByUrl('/members')
+      next: () => {
+        this.router.navigateByUrl('/members');
+        //reseting the params if the application is still open and a new user logs in on the same tab
+        this.membersService.resetUserParams();
+      }
     });
   }
 
