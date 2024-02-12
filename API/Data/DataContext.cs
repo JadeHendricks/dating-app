@@ -11,6 +11,7 @@ public class DataContext : DbContext
 
     public DbSet<AppUser> Users { get; set; }
     public DbSet<UserLike> Likes { get; set; }
+    public DbSet<Message> Messages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -30,5 +31,15 @@ public class DataContext : DbContext
             .WithMany(l => l.LikedByUsers) //can be like by many other users  
             .HasForeignKey(s => s.TargetUserId)
             .OnDelete(DeleteBehavior.Cascade); //SQL server you will need to change this to .NoAction
+
+        modelBuilder.Entity<Message>()
+            .HasOne(u => u.Recipient)
+            .WithMany(m => m.MessagesRecieved)
+            .OnDelete(DeleteBehavior.Restrict);
+            
+        modelBuilder.Entity<Message>()
+            .HasOne(u => u.Sender)
+            .WithMany(m => m.MessagesSent)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

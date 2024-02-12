@@ -19,6 +19,8 @@ public class AppUser
     public List<Photo> Photos { get; set; } = new List<Photo>(); 
     public List<UserLike> LikedByUsers { get; set; }
     public List<UserLike> LikedUsers { get; set; }
+    public List<Message> MessagesSent { get; set; }
+    public List<Message> MessagesRecieved { get; set; }
 
     //we prefix it with get here so that automapper will automatically run this
     // public int GetAge()
