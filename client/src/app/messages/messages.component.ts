@@ -23,7 +23,7 @@ export class MessagesComponent implements OnInit {
     this.loadMessages();
   }
 
-  loadMessages() {
+  public loadMessages(): void {
     this.loading = true;
     this.messageService.getMessages(this.pageNumber, this.pageSize, this.container).subscribe(response => {
       this.messages = response.result;
@@ -38,7 +38,7 @@ export class MessagesComponent implements OnInit {
   //   })
   // }
 
-  pageChanged(event: any) {
+  pageChanged(event: any): void {
     this.pageNumber = event.page;
     this.loadMessages();
   }
