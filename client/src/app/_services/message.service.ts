@@ -24,4 +24,8 @@ export class MessageService {
   public getMessageThread(username: string): Observable<Message[]> {
     return this.http.get<Message[]>(this.baseUrl + 'messages/thread/' + username);
   }
+
+  public sendMessage(username: string, content: string): Observable<Message> {
+    return this.http.post<Message>(this.baseUrl + 'messages', {recipientUsername: username, content});
+  }
 }
