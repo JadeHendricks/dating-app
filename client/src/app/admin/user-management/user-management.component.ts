@@ -12,6 +12,11 @@ import { RolesModelComponent } from 'src/app/modals/roles-model/roles-model.comp
 export class UserManagementComponent implements OnInit{
   public users: User[] = [];
   public bsModalRef: BsModalRef<RolesModelComponent> = new BsModalRef<RolesModelComponent>();
+  public availableRoles: string[] = [
+    'Admin',
+    'Moderator',
+    'Member'
+  ];
 
   constructor(
     private adminService: AdminService,
@@ -28,20 +33,32 @@ export class UserManagementComponent implements OnInit{
     });
   }
 
-  public openRolesModal(): void {
-    const initialState: ModalOptions = {
+  public openRolesModal(user: User): void {
+    console.log('openRolesModal user', user)
+    const config = {
+      class: 'modal-dialog-centered',
       initialState: {
-        list: [
-          'Do thing',
-          'Do another thing',
-          'Something else'
-        ],
-        title: 'Test modal'
+        username: user.username,
+        availableRoles: this.availableRoles,
+        selectedRoles: [...user.roles]
       }
     }
     
-    this.bsModalRef = this.modalService.show(RolesModelComponent, initialState);
-    this.bsModalRef.content!.closeBtnName = 'Close';
+    this.bsModalRef = this.modalService.show(RolesModelComponent, config);
+    this.bsModalRef.onHide?.subscribe({
+      next: () => {
+        const selectedRoles = this.bsModalRef.content?.selectedRoles;
+        if (!this.arrayEqual(selectedRoles!, user.roles)) {
+          this.adminService.updateUserRoles(user.username, selectedRoles!).subscribe({
+            next: roles => user.roles = roles
+          });
+        }
+      }
+    })
+  }
+
+  private arrayEqual(arr1: string[], arr2: string[]): boolean {
+    return JSON.stringify(arr1.sort()) === JSON.stringify(arr2.sort())
   }
 
 }

@@ -31,7 +31,6 @@ export class HasRoleDirective implements OnInit{
   private getCurrentUser(): void {
     this.accountService.currentUser$.pipe(take(1)).subscribe({
       next: user => {
-        console.log(user);
         if (user) this.user = user;
       }
     })
