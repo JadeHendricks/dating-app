@@ -29,6 +29,26 @@ public static class IdentityServiceExtensions
                     ValidateIssuer = false,
                     ValidateAudience = false
                 };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        //this is our bearer token effectively and needs to passed up as a query string
+                        //access_token must be used as this is what SignalR is looking for when it sends up the token
+                        var accessToken = context.Request.Query["access_token"];
+                        var path = context.HttpContext.Request.Path;
+
+                        //"/hubs" needs to match the first part of what we called it inside of the Program.cs file app.MapHub<PresenceHub>("hubs/presence");
+                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+                        {
+                            //this gives our signal hub access to our bearer token, because we are adding it to our context
+                            context.Token = accessToken;
+                        } 
+
+                        return Task.CompletedTask;
+                    }
+                };
             });
         
         services.AddAuthorization(opt => 

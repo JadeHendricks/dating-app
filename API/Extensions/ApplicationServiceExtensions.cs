@@ -2,6 +2,7 @@
 using API.Helpers;
 using API.Interfaces;
 using API.Services;
+using API.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Extensions;
@@ -22,6 +23,8 @@ public static class ApplicationServiceExtensions
         services.AddScoped<LogUserActivity>(); //we can be specific on where we actually want to use this (BaseApiController)
         services.AddScoped<ILikesRepository, LikesRepository>();
         services.AddScoped<IMessageRepository, MessageRepository>();
+        services.AddSignalR();
+        services.AddSingleton<PresenceTracker>();
         //automapper comes with it's own implementation
         //we need to tell automapper where our mapping profiles are
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
