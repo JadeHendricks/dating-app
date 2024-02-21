@@ -7,6 +7,7 @@ import { BehaviorSubject, Observable, take } from 'rxjs';
 import { PaginatedResult } from '../_models/pagination';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { User } from '../_models/user';
+import { Group } from '../_models/group';
 
 @Injectable({
   providedIn: 'root'
@@ -32,6 +33,24 @@ export class MessageService {
     this.hubConnection.start().catch(error => console.log(error));
     this.hubConnection.on('RecieveMessageThread', (messages: Message[]) => {
       this.messageThreadSource.next(messages);
+    });
+
+    //if a user joins our group then we are not going to receive our RecieveMessageThread and our messaage thread is not going to be updated that we've read the message
+    //so we take care of that inside of this listener
+    //we then query the messageThread$ to check if there are any messages that are unread and then mark them as read
+    this.hubConnection.on('UpdatedGroup', (group: Group) => {
+      if (group.connections.some(x => x.username == otherUsername)) {
+        this.messageThread$.pipe(take(1)).subscribe({
+          next: messages => {
+            messages.forEach(message => {
+              if (!message.dateRead) {
+                message.dateRead = new Date(Date.now())
+              }
+            });
+            this.messageThreadSource.next([...messages]);
+          }
+        })
+      }
     });
 
     this.hubConnection.on('NewMessage', message => {

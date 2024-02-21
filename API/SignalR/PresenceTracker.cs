@@ -7,8 +7,9 @@ namespace API.SignalR
             new Dictionary<string, List<string>>();
 
         //everytime a user connects they are given a new connectionId
-        public Task UserConnected(string username, string connectionId)
+        public Task<bool> UserConnected(string username, string connectionId)
         {
+            bool isOnline = false;
             //lock prevents mulitple people from accessing this at the same time
             //everyone else connetion will simply have to wait there turn to be added to this, but it's minimal time really.
             lock(OnlineUsers)
@@ -16,21 +17,26 @@ namespace API.SignalR
                 if (OnlineUsers.ContainsKey(username))
                 {
                     //if they are already connected we add them to our dictionary
+                    //this does not mean they are online, it means they've been online before
                     OnlineUsers[username].Add(connectionId);
                 }
                 else
                 {
+                    //if a new entry is added, that means the user is currently online
+                    isOnline = true;
                     OnlineUsers.Add(username, new List<string>{connectionId});
                 }
             }
-            return Task.CompletedTask;
+            return Task.FromResult(isOnline);
         }
 
-        public Task UserDisconnected(string username, string connectionId)
+        public Task<bool> UserDisconnected(string username, string connectionId)
         {
+            bool isOffline = false;
+
             lock(OnlineUsers)
             {
-                if (!OnlineUsers.ContainsKey(username)) return Task.CompletedTask;
+                if (!OnlineUsers.ContainsKey(username)) return Task.FromResult(isOffline);
 
                 //remove users connectionId
                 OnlineUsers[username].Remove(connectionId);
@@ -39,9 +45,10 @@ namespace API.SignalR
                 if (OnlineUsers[username].Count == 0)
                 {
                     OnlineUsers.Remove(username);
+                    isOffline = true;
                 }
             }
-            return Task.CompletedTask;
+            return Task.FromResult(isOffline);
         }
 
         public Task<string[]> GetOnlineUsers()
