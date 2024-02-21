@@ -15,21 +15,20 @@ import { MessageService } from 'src/app/_services/message.service';
 export class MemberMessagesComponent implements OnInit {
   @ViewChild('messageForm') messageForm?: NgForm;
   @Input() username?: string;
-  @Input() messages: Message[] = [];
   public messageContent = '';
 
-  constructor(private messageService: MessageService) {}
+  constructor(public messageService: MessageService) {}
 
   ngOnInit(): void {}
 
   public sendMessage(): void {
     if (!this.username) return;
 
-    this.messageService.sendMessage(this.username, this.messageContent).subscribe({
-      next: message => {
-        this.messages.push(message);
-        this.messageForm?.reset();
-      }
-    });
+    this.messageService.sendMessage(this.username, this.messageContent).then(() => {
+      console.log('SendMessage this.username', this.username);
+      console.log('SendMessage this.messageContent', this.messageContent);
+      //we don't need to do anything with the mssages we get back, because our messageThreadObservable is managing all of that
+      this.messageForm?.reset();
+    })
   }
 }

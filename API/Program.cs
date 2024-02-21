@@ -32,6 +32,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapHub<PresenceHub>("hubs/presence");
+app.MapHub<MessageHub>("hubs/message");
 
 //gives us access to all the services we have in this program.cs class
 using var scope = app.Services.CreateScope();
