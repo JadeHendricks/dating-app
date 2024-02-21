@@ -45,6 +45,8 @@ try
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
     var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
     await context.Database.MigrateAsync();
+    //delete data from the connections table on app restart - prevents connections remaining active when a user is not connected to the messagehub
+    await context.Database.ExecuteSqlRawAsync("DELETE FROM [Connections]"); 
     await Seed.SeedUsers(userManager, roleManager);
 }
 catch(Exception ex)
