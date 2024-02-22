@@ -70,12 +70,6 @@ namespace API.Data
                 .ToListAsync();
         }
 
-        public async Task<bool> SaveAllAsync()
-        {
-            //this will return how many changes were made to the DB and in order for us to see it, we then return a bool here
-            return await _context.SaveChangesAsync() > 0;
-        }
-
         public async void Update(AppUser user)
         {
             _context.Entry(user).State = EntityState.Modified;
