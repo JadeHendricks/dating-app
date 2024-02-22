@@ -26,7 +26,9 @@ export class NavComponent implements OnInit {
       next: () => {
         this.router.navigateByUrl('/members');
         //reseting the params if the application is still open and a new user logs in on the same tab
+        //only really needed for DEV
         this.membersService.resetUserParams();
+        this.model = {};
       }
     });
   }
